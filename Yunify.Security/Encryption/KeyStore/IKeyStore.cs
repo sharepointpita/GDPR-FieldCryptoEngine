@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Yunify.Security.Encryption.KeyStore
 {
@@ -11,10 +12,10 @@ namespace Yunify.Security.Encryption.KeyStore
     /// <typeparam name="T"></typeparam>
     public interface IKeyStore<T> 
     {
-        T CreateKeyAsync(string keyId);
+        Task<T> CreateKeyAsync(string keyId);
 
-        T GetKeyAsync(string keyId);
+        Task<T> GetKeyAsync(string keyId);
 
-        void DeleteKeyAsync(string keyId);
+        Task DeleteKeyAsync(string keyId);
     }
 }

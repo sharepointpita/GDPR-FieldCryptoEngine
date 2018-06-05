@@ -1,9 +1,11 @@
-﻿namespace Yunify.Security.Encryption.Provider
+﻿using System.Threading.Tasks;
+
+namespace Yunify.Security.Encryption.Provider
 {
     public interface IEncryptionProvider 
     {
-        string Encrypt(string userId, byte[] bytesToEncrypt);
+        Task<string> EncryptAsync(string userId, byte[] bytesToEncrypt);
 
-        byte[] Decrypt(string userId, string txtToDecryptBase64Enc);
+        Task<byte[]> DecryptAsync(string userId, string txtToDecryptBase64Enc);
     }
 }

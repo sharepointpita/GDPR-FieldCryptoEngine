@@ -18,9 +18,11 @@ Two reasons why this solution may be usefull to you:
 - [ ] Engine: Support **SensitiveDataKey** Attribute in order to retrieve the User Identifier out of the object.
 - [x] Provider: **RSA Encryption** Provider
 - [ ] Provider: **AES Encryption** Provider
+- [x] Provider: **Azure Key Vault RSA** Provider
 - [x] Key store: **File system** storage support for RSA keys.
 - [x] Key store: **Inmemmory support** for RSA keys.
 - [ ] Key store: **Protected Cache** as concrete IKeyStore Implementation and functioning as Proxy.
+- [x] Key store: **Azure Key Vault**
 
 ## Dependencies
 - [MessagePack (Binary Serialization)](https://msgpack.org/) 
@@ -30,6 +32,52 @@ Two reasons why this solution may be usefull to you:
 
 ## Example
 
+### Person Class
+```
+public class Person
+{
+    [SensitiveData]
+    public string firstName;
 
+    [SensitiveData]
+    string surName;
+    public string SurName => surName;
+
+    [SensitiveData]
+    public string SocialSecurityNumber { get; set; }
+
+    [SensitiveData]
+    string SexualPreferences { get; set; }
+
+    public string SexualPreferencesProxy { get { return SexualPreferences; } }
+
+    public Person(string firstName, string surName, string sexualPreferences = "none of your business")
+    {
+        this.firstName = firstName;
+        this.surName = surName;
+        this.SexualPreferences = sexualPreferences;
+    }
+}
+```
+
+### Encrypt / Decrypt with the FieldCryptoEngine
+```
+var person = new Person("John", "Doe", "heterosexual")
+{
+    SocialSecurityNumber = "AAA-GG-SSSS"
+};
+
+// The userId will also be used as the key identifier. 
+string fakeUserId = "abc";
+
+await engine.EncryptAsync(fakeUserId, person);
+
+// After calling the EncryptAsync method the properities flagged with [SensitiveData] attribute will look scrambled:
+// person.SocialSecurityNumber = 
+
+...
+
+engine.DecryptAsync(fakeUserId, person);
+```
 
 

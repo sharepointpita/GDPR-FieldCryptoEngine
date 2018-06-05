@@ -2,6 +2,7 @@
 using System;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using Yunify.Security.Encryption.Provider;
 
 namespace Yunify.Security.SensitiveData
@@ -15,7 +16,7 @@ namespace Yunify.Security.SensitiveData
             _provider = provider;
         }
 
-        public virtual void Encrypt<T>(string userId, T o) where T : class
+        public virtual async Task EncryptAsync<T>(string userId, T o) where T : class
         {
             // Loop through object fields and find all fields with [SensitiveDataAttribute]
             var members = o.GetSensitiveDataMembers();
@@ -60,21 +61,21 @@ namespace Yunify.Security.SensitiveData
                     // Do actual encryption to dest field
                     if (underlyingType == typeof(string))
                     {
-                        encryptMember.SetValue(o, _provider.Encrypt(userId, Encoding.UTF8.GetBytes(val)));
+                        encryptMember.SetValue(o, await _provider.EncryptAsync(userId, Encoding.UTF8.GetBytes(val)));
                     }
                     else 
                     {
                         // Serialize to binary formatter with MessagePack
                         serializedVal = MessagePackSerializer.Typeless.Serialize(val);
 
-                        encryptMember.SetValue(o, _provider.Encrypt(userId, serializedVal));
+                        encryptMember.SetValue(o, await _provider.EncryptAsync(userId, serializedVal));
                     }
 
                 }
             }
         }
 
-        public virtual void Decrypt<T>(string userId, T o) where T : class
+        public virtual async Task DecryptAsync<T>(string userId, T o) where T : class
         {
             var members = o.GetSensitiveDataMembers();
             dynamic encryptMember = null;
@@ -118,11 +119,11 @@ namespace Yunify.Security.SensitiveData
                     // c. Decypt and store value back into src member
                     if (underlyingType == typeof(string))
                     {
-                        (srcMember as dynamic).SetValue(o, Encoding.UTF8.GetString(_provider.Decrypt(userId, val)));
+                        (srcMember as dynamic).SetValue(o, Encoding.UTF8.GetString(await _provider.DecryptAsync(userId, val)));
                     }
                     else
                     {
-                        serializedVal = _provider.Decrypt(userId, val);
+                        serializedVal = await _provider.DecryptAsync(userId, val);
 
                         // Deserialize to binary back to object with MessagePack
                         var obj = MessagePackSerializer.Typeless.Deserialize(serializedVal);

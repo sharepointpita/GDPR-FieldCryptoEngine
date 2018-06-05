@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Xunit;
 using Yunify.Security.Encryption.Asymmentric.RSA;
 using Yunify.Security.Encryption.KeyStore;
@@ -21,7 +22,7 @@ namespace Yunify.Security.SensitiveData.Tests
 
 
         [Fact]
-        public void Encrypt_should_encrypt_reference_field_with_sensitivedata_attribute()
+        public async Task Encrypt_should_encrypt_reference_field_with_sensitivedata_attribute()
         {
 
             string firstChildName = "Baby Doe";
@@ -29,12 +30,12 @@ namespace Yunify.Security.SensitiveData.Tests
             var person = new Adult  {Name= "John Doe", FirstChild = new Child() { Name = "Baby Doe" } };
             var userId = Guid.NewGuid().ToString();
 
-            _engine.Encrypt(userId, person);
+            await _engine.EncryptAsync(userId, person);
 
             Assert.Null(person.FirstChild);
             Assert.NotNull(person.FirstChildEncrypted);
 
-            _engine.Decrypt(userId, person);
+            await _engine.DecryptAsync(userId, person);
 
             Assert.NotNull(person.FirstChild);
             Assert.Null(person.FirstChildEncrypted);

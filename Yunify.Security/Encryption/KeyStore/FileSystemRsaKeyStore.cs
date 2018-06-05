@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.OpenSsl;
@@ -27,13 +28,7 @@ namespace Yunify.Security.Encryption.KeyStore
         }
 
 
-        public void DeleteKeyAsync(string keyId)
-        {
-            File.Delete(GetFilePath(keyId));
-        }
-
-
-        public AsymmetricCipherKeyPair CreateKeyAsync(string keyId)
+        public Task<AsymmetricCipherKeyPair> CreateKeyAsync(string keyId)
         {
 
             /*
@@ -59,10 +54,16 @@ namespace Yunify.Security.Encryption.KeyStore
             // Store private key
             File.WriteAllText(GetFilePath(keyId), sw.ToString());
 
-            return key;
+            return Task.FromResult(key);
         }
 
-        public AsymmetricCipherKeyPair GetKeyAsync(string keyId)
+        public Task DeleteKeyAsync(string keyId)
+        {
+            File.Delete(GetFilePath(keyId));
+            return Task.CompletedTask;
+        }
+
+        public Task<AsymmetricCipherKeyPair> GetKeyAsync(string keyId)
         {
             try
             {
@@ -76,13 +77,17 @@ namespace Yunify.Security.Encryption.KeyStore
                 // create public key given the private key Module and Exponent
                 var privateKeyParameters = (RsaPrivateCrtKeyParameters)rdKey;
 
-                return new AsymmetricCipherKeyPair( _keyGenerator.GeneratePublicKey(privateKeyParameters.Modulus, privateKeyParameters.PublicExponent), rdKey);
+                var key = new AsymmetricCipherKeyPair(_keyGenerator.GeneratePublicKey(privateKeyParameters.Modulus, privateKeyParameters.PublicExponent), rdKey);
+
+                return Task.FromResult(key);
             }
             catch (FileNotFoundException)
             {
                 return null;
             }
         }
+
+ 
 
         private string GetFilePath(string keyId)
         {

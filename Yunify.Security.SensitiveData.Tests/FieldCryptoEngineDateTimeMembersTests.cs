@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Xunit;
 using Yunify.Security.Encryption.Asymmentric.RSA;
 using Yunify.Security.Encryption.KeyStore;
@@ -20,13 +21,13 @@ namespace Yunify.Security.SensitiveData.Tests
         }
 
         [Fact]
-        public void Encrypt_should_encrypt_private_datetime_field_with_sensitivedata_attribute()
+        public async Task Encrypt_should_encrypt_private_datetime_field_with_sensitivedata_attribute()
         {
             var userId = Guid.NewGuid().ToString();
             var birthDate = new DateTime(1980, 1, 1);
             var person = new PersonLifeTime(birthDate);
             
-            _engine.Encrypt(userId, person);
+            await _engine.EncryptAsync(userId, person);
 
             // Person BirthDate should set to a default datetime value.
             Assert.NotEqual(birthDate, person.BirthDate);
@@ -36,20 +37,20 @@ namespace Yunify.Security.SensitiveData.Tests
             Assert.NotNull(person.BirthDateEncrypted);
 
             // After decrypt the target member should get a Default value (this case null)
-            _engine.Decrypt(userId, person);
+            await _engine.DecryptAsync(userId, person);
             Assert.Equal(birthDate, person.BirthDate);
             Assert.Null(person.BirthDateEncrypted);
         }
 
         [Fact]
-        public void Encrypt_should_encrypt_public_datetime_field_with_sensitivedata_attribute()
+        public async Task Encrypt_should_encrypt_public_datetime_field_with_sensitivedata_attribute()
         {
             var userId = Guid.NewGuid().ToString();
             var person = new PersonLifeTime(null);
             var mariageDate = new DateTime(2000, 1, 1);
 
             person.MariageDate = mariageDate;
-            _engine.Encrypt(userId, person);
+            await _engine.EncryptAsync(userId, person);
 
             // Person MariageDate should set to a default datetime value.
             Assert.NotEqual(mariageDate, person.MariageDate);
@@ -59,20 +60,20 @@ namespace Yunify.Security.SensitiveData.Tests
             Assert.NotNull(person.MariageDateEncrypted);
 
             // After decrypt the target member should get a Default value (this case null)
-            _engine.Decrypt(userId, person);
+            await _engine.DecryptAsync(userId, person);
             Assert.Equal(mariageDate, person.MariageDate);
             Assert.Null(person.MariageDateEncrypted);
         }
 
         [Fact]
-        public void Encrypt_should_encrypt_public_datetime_property_with_sensitivedata_attribute()
+        public async Task Encrypt_should_encrypt_public_datetime_property_with_sensitivedata_attribute()
         {
             var userId = Guid.NewGuid().ToString();
             var person = new PersonLifeTime(null);
             var graduateDate = new DateTime(2000, 1, 1);
 
             person.GraduateDate = graduateDate;
-            _engine.Encrypt(userId, person);
+            await _engine.EncryptAsync(userId, person);
 
             // Person MariageDate should set to a default datetime value.
             Assert.NotEqual(graduateDate, person.MariageDate);
@@ -82,20 +83,20 @@ namespace Yunify.Security.SensitiveData.Tests
             Assert.NotNull(person.GraduateDateEncrypted);
 
             // After decrypt the target member should get a Default value (this case null)
-            _engine.Decrypt(userId, person);
+            await _engine.DecryptAsync(userId, person);
             Assert.Equal(graduateDate, person.GraduateDate);
             Assert.Null(person.GraduateDateEncrypted);
         }
 
         [Fact]
-        public void Encrypt_should_encrypt_private_datetime_property_with_sensitivedata_attribute()
+        public async Task Encrypt_should_encrypt_private_datetime_property_with_sensitivedata_attribute()
         {
             var userId = Guid.NewGuid().ToString();
 
             var dateOfDeath = new DateTime(2050, 1, 1);
             var person = new PersonLifeTime(null, dateOfDeath);
-            
-            _engine.Encrypt(userId, person);
+
+            await _engine.EncryptAsync(userId, person);
 
             // Person MariageDate should set to a default datetime value.
             Assert.NotEqual(dateOfDeath, person.DateOfDeathProxy);
@@ -105,7 +106,7 @@ namespace Yunify.Security.SensitiveData.Tests
             Assert.NotNull(person.DateOfDeathEncrypted);
 
             // After decrypt the target member should get a Default value (this case null)
-            _engine.Decrypt(userId, person);
+            await _engine.DecryptAsync(userId, person);
             Assert.Equal(dateOfDeath, person.DateOfDeathProxy);
             Assert.Null(person.DateOfDeathEncrypted);
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Xunit;
 using Yunify.Security.Encryption.Asymmentric.RSA;
 using Yunify.Security.Encryption.KeyStore;
@@ -21,65 +22,65 @@ namespace Yunify.Security.SensitiveData.Tests
 
 
         [Fact]
-        public void Encrypt_should_encrypt_private_string_field_with_sensitivedata_attribute()
+        public async Task Encrypt_should_encrypt_private_string_field_with_sensitivedata_attribute()
         {
             var person = new Person("John", "Doe");
             var userId = Guid.NewGuid().ToString();
 
-            _engine.Encrypt(userId, person);
+            await _engine.EncryptAsync(userId, person);
 
             // Private Field of type String
             Assert.NotEqual("Doe", person.SurName);
 
-            _engine.Decrypt(userId, person);
+            await _engine.DecryptAsync(userId, person);
 
             Assert.Equal("Doe", person.SurName);
         }
 
         [Fact]
-        public void Encrypt_should_encrypt_public_string_field_with_sensitivedata_attribute()
+        public async Task Encrypt_should_encrypt_public_string_field_with_sensitivedata_attribute()
         {
             var person = new Person("John", "Doe");
             var userId = Guid.NewGuid().ToString();
 
-            _engine.Encrypt(userId, person);
+            await _engine.EncryptAsync(userId, person);
 
             // Private Field of type String
             Assert.NotEqual("John", person.firstName);
 
-            _engine.Decrypt(userId, person);
+            await _engine.DecryptAsync(userId, person);
 
             Assert.Equal("John", person.firstName);
         }
 
         [Fact]
-        public void Encrypt_should_encrypt_public_string_property_with_sensitivedata_attribute()
+        public async Task Encrypt_should_encrypt_public_string_property_with_sensitivedata_attribute()
         {
             var person = new Person("John", "Doe") { SocialSecurityNumber = "123qwe" };
             var userId = Guid.NewGuid().ToString();
 
-            _engine.Encrypt(userId, person);
+            await _engine.EncryptAsync(userId, person);
 
             // Public Property of type String
             Assert.NotEqual("123qwe", person.SocialSecurityNumber);
 
-            _engine.Decrypt(userId, person);
+            await _engine.DecryptAsync(userId, person);
 
             Assert.Equal("123qwe", person.SocialSecurityNumber);
         }
 
         [Fact]
-        public void Encrypt_should_encrypt_private_string_property_with_sensitivedata_attribute()
+        public async Task Encrypt_should_encrypt_private_string_property_with_sensitivedata_attribute()
         {
             var person = new Person("John", "Doe", "aliens");
             var userId = Guid.NewGuid().ToString();
 
-            _engine.Encrypt(userId, person);
+            await _engine.EncryptAsync(userId, person);
 
             // Public Property of type String
             Assert.NotEqual("aliens", person.SexualPreferencesProxy);
 
-            _engine.Decrypt(userId, person);
+            await _engine.DecryptAsync(userId, person);
 
             Assert.Equal("aliens", person.SexualPreferencesProxy);
         }

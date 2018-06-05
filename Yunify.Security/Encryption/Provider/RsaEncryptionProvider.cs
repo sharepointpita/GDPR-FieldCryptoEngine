@@ -7,6 +7,7 @@ using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
 using System;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using Yunify.Security.Encryption.KeyStore;
 
 namespace Yunify.Security.Encryption.Provider
@@ -21,9 +22,11 @@ namespace Yunify.Security.Encryption.Provider
             _keyStore = keyStore;
         }
 
-        public string Encrypt(string userId, byte[] bytesToEncrypt)
+        public async Task<string> EncryptAsync(string userId, byte[] bytesToEncrypt)
         {
-            AsymmetricCipherKeyPair keys = _keyStore.GetKeyAsync(userId) ?? _keyStore.CreateKeyAsync(userId);
+            var x = await _keyStore.GetKeyAsync(userId);
+
+            AsymmetricCipherKeyPair keys = (await _keyStore.GetKeyAsync(userId)) ?? (await _keyStore.CreateKeyAsync(userId));
 
             SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keys.Public);
 
@@ -42,9 +45,9 @@ namespace Yunify.Security.Encryption.Provider
             }
         }
 
-        public byte[] Decrypt(string userId, string txtToDecryptBase64Enc)
+        public async Task<byte[]> DecryptAsync(string userId, string txtToDecryptBase64Enc)
         {
-            AsymmetricCipherKeyPair keys = _keyStore.GetKeyAsync(userId);
+            AsymmetricCipherKeyPair keys = await _keyStore.GetKeyAsync(userId);
 
             PrivateKeyInfo privateKeyInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keys.Private);
 

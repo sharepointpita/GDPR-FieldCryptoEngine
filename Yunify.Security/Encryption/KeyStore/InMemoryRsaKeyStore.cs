@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Org.BouncyCastle.Crypto;
 using Yunify.Security.Encryption.Asymmentric.RSA;
 
@@ -17,29 +18,30 @@ namespace Yunify.Security.Encryption.KeyStore
         }
         
 
-        public AsymmetricCipherKeyPair CreateKeyAsync(string keyId)
+        public Task<AsymmetricCipherKeyPair> CreateKeyAsync(string keyId)
         {
             var key = _keyGenerator.GenerateRsaKey(RsaKeySize.R3072);
             if (!_keys.ContainsKey(keyId))
             {
                 _keys.Add(keyId,key);
             }
-            return key;
+            return Task.FromResult(key);
         }
 
-        public void DeleteKeyAsync(string keyId)
+        public Task DeleteKeyAsync(string keyId)
         {
             if (_keys.ContainsKey(keyId))
             {
                 _keys.Remove(keyId);
             }
+            return Task.CompletedTask;
         }
 
-        public AsymmetricCipherKeyPair GetKeyAsync(string keyId)
+        public Task<AsymmetricCipherKeyPair> GetKeyAsync(string keyId)
         {
             if (_keys.ContainsKey(keyId))
             {
-                return _keys[keyId];
+                return Task.FromResult(_keys[keyId]);
             }
             else
             {
