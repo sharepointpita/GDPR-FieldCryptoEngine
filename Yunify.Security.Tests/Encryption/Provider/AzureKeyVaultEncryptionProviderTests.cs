@@ -8,14 +8,18 @@ using Yunify.Security.Encryption.Provider;
 
 namespace Yunify.Security.Tests
 {
-    public class AzureKeyVaultEncryptionProviderTests
+    public class AzureKeyVaultEncryptionProviderTests : AzureKeyVaultTestBase
     {
 
         private readonly IEncryptionProvider _sut;
 
         public AzureKeyVaultEncryptionProviderTests()
+            : base()
         {
-            var store = new AzureKeyVaultStore("keyvaultUrl", "clientId", "clientSecret");
+            var store = new AzureKeyVaultStore(AzureKeyVaultSecrets.VaultAddress
+                , AzureKeyVaultSecrets.ClientId
+                , AzureKeyVaultSecrets.ClientSecret);
+
             _sut = new AzureKeyVaultEncryptionProvider(store);
         }
 
