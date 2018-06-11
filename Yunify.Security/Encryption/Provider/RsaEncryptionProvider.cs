@@ -24,9 +24,7 @@ namespace Yunify.Security.Encryption.Provider
 
         public async Task<string> EncryptAsync(string userId, byte[] bytesToEncrypt)
         {
-            var x = await _keyStore.GetKeyAsync(userId);
-
-            AsymmetricCipherKeyPair keys = (await _keyStore.GetKeyAsync(userId)) ?? (await _keyStore.CreateKeyAsync(userId));
+            AsymmetricCipherKeyPair keys = await _keyStore.GetKeyAsync(userId) ?? await _keyStore.CreateKeyAsync(userId);
 
             SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keys.Public);
 

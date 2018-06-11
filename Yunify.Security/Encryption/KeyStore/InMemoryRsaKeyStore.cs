@@ -45,7 +45,7 @@ namespace Yunify.Security.Encryption.KeyStore
             }
             else
             {
-                return null;
+                return Task.FromResult<AsymmetricCipherKeyPair>(null);
             }
         }
     }
