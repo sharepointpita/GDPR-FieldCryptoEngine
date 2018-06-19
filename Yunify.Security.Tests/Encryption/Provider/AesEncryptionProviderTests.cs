@@ -1,21 +1,20 @@
-using System;
+﻿using System;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using Yunify.Security.Encryption.Asymmentric.RSA;
 using Yunify.Security.Encryption.KeyStore;
 using Yunify.Security.Encryption.Provider;
+using Yunify.Security.Encryption.Symmetric;
 
 namespace Yunify.Security.Tests.Encryption.Provider
 {
-    public class RsaEncrypterProviderTests
+    public class AesEncryptionProviderTests
     {
-
         private readonly IEncryptionProvider _provider;
 
-        public RsaEncrypterProviderTests()
+        public AesEncryptionProviderTests()
         {
-            _provider = new RsaEncryptionProvider(new InMemoryRsaKeyStore(new RsaKeyGenerator()));
+            _provider = new AesEncryptionProvider(new InMemoryAesKeyStore(new AesKeyGenerator()));
         }
 
 

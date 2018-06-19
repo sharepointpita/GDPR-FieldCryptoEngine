@@ -12,7 +12,7 @@
         R2048 = 2048,
 
         /// <summary>
-        /// User still after 2030
+        /// Used still after 2030
         /// </summary>
         R3072 = 3072,
 

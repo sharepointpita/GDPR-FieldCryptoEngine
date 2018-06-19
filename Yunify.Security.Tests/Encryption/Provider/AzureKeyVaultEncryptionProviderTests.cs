@@ -2,11 +2,10 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using Yunify.Security.Encryption.Asymmentric.RSA;
 using Yunify.Security.Encryption.KeyStore;
 using Yunify.Security.Encryption.Provider;
 
-namespace Yunify.Security.Tests
+namespace Yunify.Security.Tests.Encryption.Provider
 {
     public class AzureKeyVaultEncryptionProviderTests : AzureKeyVaultTestBase
     {
