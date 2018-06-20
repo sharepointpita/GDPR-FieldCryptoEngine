@@ -82,9 +82,6 @@ public class Person
     [SensitiveDataKeyId]
     public int Id;
 
-    [SensitiveData]
-    public string FirstName { get; set; }
-
     [SensitiveData(SerializeToMember =nameof(AgeEncrypted))]
     public int Age { get; set; };
 
@@ -97,7 +94,6 @@ public class Person
 var person = new Person()
 {
     Id = 1,
-    FirstName = "John",
     Age = 30
 };
 
@@ -105,7 +101,6 @@ await engine.EncryptAsync(person);
 
 // Debug Output: 
 // person.Id : 1
-// person.FirstName : "YpipjLAYUfYd1c+SBBxPkg=="
 // person.Age : 0
 // person.AgeEncrypted : "vY3Vavr3dlRO4x29feNt/w=="
 
@@ -113,7 +108,6 @@ await engine.DecryptAsync(person);
 
 // Debug Output: 
 // person.Id : 1
-// person.FirstName : "John"
 // person.Age : 30
 // person.AgeEncrypted : null
 ```
