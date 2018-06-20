@@ -82,6 +82,8 @@ public class Person
     [SensitiveDataKeyId]
     public int Id;
 
+    ...
+
     [SensitiveData(SerializeToMember =nameof(AgeEncrypted))]
     public int Age { get; set; };
 
@@ -94,6 +96,7 @@ public class Person
 var person = new Person()
 {
     Id = 1,
+    ...
     Age = 30
 };
 
