@@ -17,11 +17,11 @@ Two reasons why this solution may be usefull to you:
 - [x] Engine: Non String types can be **serialized** with into another Field or Property in order to encrypt/decrypt.
 - [ ] Engine: Support **SensitiveDataKey** Attribute in order to retrieve the User Identifier out of the object.
 - [x] Provider: **RSA Encryption** Provider
-- [ ] Provider: **AES Encryption** Provider
+- [x] Provider: **AES Encryption** Provider
 - [x] Provider: **Azure Key Vault RSA** Provider
 - [x] Key store: **File system** storage support for RSA keys.
 - [x] Key store: **Inmemmory support** for RSA keys.
-- [ ] Key store: **Protected Cache** as concrete IKeyStore Implementation and functioning as Proxy.
+- [x] Key store: **CacheKeyStore** as concrete IKeyStore Implementation and functioning as Proxy between EncryptionProvider and the actual KeyStore.
 - [x] Key store: **Azure Key Vault**
 
 ## Dependencies
@@ -33,7 +33,7 @@ Two reasons why this solution may be usefull to you:
 ## Example
 
 ### Person Class
-```
+```csharp
 public class Person
 {
     [SensitiveData]
@@ -61,7 +61,7 @@ public class Person
 ```
 
 ### Encrypt / Decrypt with the FieldCryptoEngine
-```
+```csharp
 var person = new Person("John", "Doe", "heterosexual")
 {
     SocialSecurityNumber = "AAA-GG-SSSS"
