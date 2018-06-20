@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Yunify.Security.Encryption.Symmetric;
+using Yunify.Security.Encryption.Symmetric.AES;
 
 namespace Yunify.Security.Encryption.KeyStore
 {

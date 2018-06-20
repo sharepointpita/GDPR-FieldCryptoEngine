@@ -5,6 +5,7 @@ using Xunit;
 using Yunify.Security.Encryption.KeyStore;
 using Yunify.Security.Encryption.Provider;
 using Yunify.Security.Encryption.Symmetric;
+using Yunify.Security.Encryption.Symmetric.AES;
 
 namespace Yunify.Security.Tests.Encryption.Provider
 {

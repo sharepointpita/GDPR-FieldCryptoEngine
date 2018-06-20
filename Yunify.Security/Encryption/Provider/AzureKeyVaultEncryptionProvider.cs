@@ -18,9 +18,9 @@ namespace Yunify.Security.Encryption.Provider
             _azureKeyVaultKeyStore = azureKeyVaultKeyStore;
         }
 
-        public async Task<string> EncryptAsync(string userId, byte[] bytesToEncrypt)
+        public async Task<string> EncryptAsync(string keyId, byte[] bytesToEncrypt)
         {
-            var key = await _azureKeyVaultKeyStore.GetKeyAsync(userId) ?? await _azureKeyVaultKeyStore.CreateKeyAsync(userId);
+            var key = await _azureKeyVaultKeyStore.GetKeyAsync(keyId) ?? await _azureKeyVaultKeyStore.CreateKeyAsync(keyId);
 
             using (RSA rsaa = RSA.Create())
             {
@@ -40,9 +40,9 @@ namespace Yunify.Security.Encryption.Provider
             }
         }
 
-        public async Task<byte[]> DecryptAsync(string userId, string txtToDecryptBase64Enc)
+        public async Task<byte[]> DecryptAsync(string keyId, string txtToDecryptBase64Enc)
         {
-            var key = await _azureKeyVaultKeyStore.GetKeyAsync(userId);
+            var key = await _azureKeyVaultKeyStore.GetKeyAsync(keyId);
 
             using (RSA rsaa = RSA.Create())
             {

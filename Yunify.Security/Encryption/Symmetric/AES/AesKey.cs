@@ -1,4 +1,4 @@
-﻿namespace Yunify.Security.Encryption.Symmetric
+﻿namespace Yunify.Security.Encryption.Symmetric.AES
 {
     public class AesKey
     {

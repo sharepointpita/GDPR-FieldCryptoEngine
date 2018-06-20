@@ -16,6 +16,13 @@ namespace Yunify.Security.SensitiveData
             _provider = provider;
         }
 
+
+        public virtual Task EncryptAsync<T>(T o) where T : class
+        {
+            string keyId = ValidateAndGetSensitiveDataKeyId(o);
+            return EncryptAsync(keyId, o);
+        }
+
         public virtual async Task EncryptAsync<T>(string userId, T o) where T : class
         {
             // Loop through object fields and find all fields with [SensitiveDataAttribute]
@@ -73,6 +80,13 @@ namespace Yunify.Security.SensitiveData
 
                 }
             }
+        }
+
+
+        public virtual Task DecryptAsync<T>(T o) where T : class
+        {
+            string keyId = ValidateAndGetSensitiveDataKeyId(o);
+            return DecryptAsync(keyId, o);
         }
 
         public virtual async Task DecryptAsync<T>(string userId, T o) where T : class
@@ -134,6 +148,8 @@ namespace Yunify.Security.SensitiveData
             }
         }
 
+
+
         private void ValidateDestionationMember(MemberInfo sourceMember, MemberInfo destinationMember)
         {
             // 1. Check if destination member exists
@@ -149,5 +165,33 @@ namespace Yunify.Security.SensitiveData
             }
         }
 
+        private string ValidateAndGetSensitiveDataKeyId<T>(T o) where T : class
+        {
+            dynamic member;
+            dynamic val;
+            string keyId;
+
+            // Loop through object fields and find all fields with [SensitiveDataKeyIdAttribute]
+            var members = o.GetSensitiveDataKeyIdMembers();
+
+            if (members.Length > 1)
+                throw new Exception($"The Class {nameof(o)} has multiple [SensitiveDataKeyId] Attributes defined. Only one is allowed!");
+            else if (members.Length == 0)
+                throw new Exception($"The Class {nameof(o)} contains no [SensitiveDataKeyId] Attributes. In order to to call this method, there " +
+                    $"should be one [SensitiveDataKeyId] specified.");
+            else
+            {
+                member = members[0];
+                val = member.GetValue(o);
+                keyId = val?.ToString();
+               
+
+                if (string.IsNullOrWhiteSpace(keyId))
+                    throw new Exception("The member with [SensitiveDataKeyId] applied contains either a NULL value or an Emtpy String.");
+
+                // Validation passed...
+                return keyId;
+            }
+        }
     }
 }

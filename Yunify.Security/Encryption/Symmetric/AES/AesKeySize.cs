@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Yunify.Security.Encryption.Symmetric
+﻿namespace Yunify.Security.Encryption.Symmetric.AES
 {
     /// <summary>
     /// AES key size in bits

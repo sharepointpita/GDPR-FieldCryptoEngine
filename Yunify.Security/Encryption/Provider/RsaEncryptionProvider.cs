@@ -22,9 +22,9 @@ namespace Yunify.Security.Encryption.Provider
             _keyStore = keyStore;
         }
 
-        public async Task<string> EncryptAsync(string userId, byte[] bytesToEncrypt)
+        public async Task<string> EncryptAsync(string keyId, byte[] bytesToEncrypt)
         {
-            AsymmetricCipherKeyPair keys = await _keyStore.GetKeyAsync(userId) ?? await _keyStore.CreateKeyAsync(userId);
+            AsymmetricCipherKeyPair keys = await _keyStore.GetKeyAsync(keyId) ?? await _keyStore.CreateKeyAsync(keyId);
 
             SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keys.Public);
 
@@ -43,9 +43,9 @@ namespace Yunify.Security.Encryption.Provider
             }
         }
 
-        public async Task<byte[]> DecryptAsync(string userId, string txtToDecryptBase64Enc)
+        public async Task<byte[]> DecryptAsync(string keyId, string txtToDecryptBase64Enc)
         {
-            AsymmetricCipherKeyPair keys = await _keyStore.GetKeyAsync(userId);
+            AsymmetricCipherKeyPair keys = await _keyStore.GetKeyAsync(keyId);
 
             PrivateKeyInfo privateKeyInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keys.Private);
 

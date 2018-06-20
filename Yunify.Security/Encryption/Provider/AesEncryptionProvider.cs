@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Yunify.Security.Encryption.KeyStore;
-using Yunify.Security.Encryption.Symmetric;
+using Yunify.Security.Encryption.Symmetric.AES;
 
 namespace Yunify.Security.Encryption.Provider
 {
@@ -18,9 +18,9 @@ namespace Yunify.Security.Encryption.Provider
         }
 
 
-        public async Task<string> EncryptAsync(string userId, byte[] bytesToEncrypt)
+        public async Task<string> EncryptAsync(string keyId, byte[] bytesToEncrypt)
         {
-            AesKey aesKey = await _keyStore.GetKeyAsync(userId) ?? await _keyStore.CreateKeyAsync(userId);
+            AesKey aesKey = await _keyStore.GetKeyAsync(keyId) ?? await _keyStore.CreateKeyAsync(keyId);
 
             Byte[] bkey = Encoding.UTF8.GetBytes(aesKey.Key);
             Byte[] bIV = Encoding.UTF8.GetBytes(aesKey.IV);
@@ -44,9 +44,9 @@ namespace Yunify.Security.Encryption.Provider
             }
         }
 
-        public async Task<byte[]> DecryptAsync(string userId, string txtToDecryptBase64Enc)
+        public async Task<byte[]> DecryptAsync(string keyId, string txtToDecryptBase64Enc)
         {
-            AesKey aesKey = await _keyStore.GetKeyAsync(userId) ?? await _keyStore.CreateKeyAsync(userId);
+            AesKey aesKey = await _keyStore.GetKeyAsync(keyId) ?? await _keyStore.CreateKeyAsync(keyId);
 
             Byte[] bKey = Encoding.UTF8.GetBytes(aesKey.Key);
             Byte[] bIV = Encoding.UTF8.GetBytes(aesKey.IV);

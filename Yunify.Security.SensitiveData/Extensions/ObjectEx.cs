@@ -13,6 +13,14 @@ namespace Yunify.Security.SensitiveData
                                     | BindingFlags.NonPublic
                                     | BindingFlags.Public;
 
+        public static MemberInfo[] GetSensitiveDataKeyIdMembers<T>(this T o) where T : class
+        {
+            return o.GetType().GetMembers(_bindingFlags)
+                .Where(e => (e.MemberType == MemberTypes.Field || e.MemberType == MemberTypes.Property)
+                    && e.CustomAttributes.Any(z => z.AttributeType == typeof(SensitiveDataKeyIdAttribute)))
+                .ToArray();
+        }   
+
         public static MemberInfo[] GetSensitiveDataMembers<T>(this T o) where T : class
         {
             return o.GetType().GetMembers(_bindingFlags)

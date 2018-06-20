@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Security.Cryptography;
 using System.Text;
 
-namespace Yunify.Security.Encryption.Symmetric
+namespace Yunify.Security.Encryption.Symmetric.AES
 {
     public class AesKeyGenerator : IAesKeyGenerator
     {

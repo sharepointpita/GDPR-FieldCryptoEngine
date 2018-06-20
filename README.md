@@ -15,14 +15,16 @@ Two reasons why this solution may be usefull to you:
 ## Feature List
 - [x] Engine: Support encrypt/decrypt for both **primitive types** and **refence types**.
 - [x] Engine: Non String types can be **serialized** with into another Field or Property in order to encrypt/decrypt.
-- [ ] Engine: Support **SensitiveDataKey** Attribute in order to retrieve the User Identifier out of the object.
+- [x] Engine: Support **SensitiveDataKey** Attribute in order to retrieve the User Identifier out of the object.
 - [x] Provider: **RSA Encryption** Provider
 - [x] Provider: **AES Encryption** Provider
 - [x] Provider: **Azure Key Vault RSA** Provider
 - [x] Key store: **File system** storage support for RSA keys.
 - [x] Key store: **Inmemmory support** for RSA keys.
+- [x] Key store: **Inmemmory support** for AES keys.
 - [x] Key store: **CacheKeyStore** as concrete IKeyStore Implementation and functioning as Proxy between EncryptionProvider and the actual KeyStore.
 - [x] Key store: **Azure Key Vault**
+- [ ] Key Store Options: Possibility to define key size and other encryption options when registring a specific Key Store.
 
 ## Dependencies
 - [MessagePack (Binary Serialization)](https://msgpack.org/) 
@@ -30,54 +32,90 @@ Two reasons why this solution may be usefull to you:
 - [Portable.BouncyCastle (light weight Encryption library)](http://www.bouncycastle.org/csharp/)
 
 
-## Example
+## Example 1. encrypt member of type String
 
 ### Person Class
 ```csharp
 public class Person
 {
-    [SensitiveData]
-    public string firstName;
+    [SensitiveDataKeyId]
+    public int Id;
 
     [SensitiveData]
-    string surName;
-    public string SurName => surName;
+    public string FirstName { get; set; }
 
-    [SensitiveData]
-    public string SocialSecurityNumber { get; set; }
-
-    [SensitiveData]
-    string SexualPreferences { get; set; }
-
-    public string SexualPreferencesProxy { get { return SexualPreferences; } }
-
-    public Person(string firstName, string surName, string sexualPreferences = "none of your business")
-    {
-        this.firstName = firstName;
-        this.surName = surName;
-        this.SexualPreferences = sexualPreferences;
-    }
+    public int Age { get; set; };
 }
 ```
 
-### Encrypt / Decrypt with the FieldCryptoEngine
+### FieldCryptoEngine
 ```csharp
-var person = new Person("John", "Doe", "heterosexual")
+var person = new Person()
 {
-    SocialSecurityNumber = "AAA-GG-SSSS"
+    Id = 1,
+    FirstName = "John",
+    Age = 30
 };
 
-// The userId will also be used as the key identifier. 
-string fakeUserId = "abc";
+await engine.EncryptAsync(person);
 
-await engine.EncryptAsync(fakeUserId, person);
+// Debug Output: 
+// person.Id : 1
+// person.FirstName : "YpipjLAYUfYd1c+SBBxPkg=="
+// person.Age : 30
 
-// After calling the EncryptAsync method the properities flagged with [SensitiveData] attribute will look scrambled:
-// person.SocialSecurityNumber = 
+await engine.DecryptAsync(person);
 
-...
+// Debug Output: 
+// person.Id : 1
+// person.FirstName : "John"
+// person.Age : 30
+```
 
-engine.DecryptAsync(fakeUserId, person);
+
+## Example 2. encrypt member of type other than String
+
+### Person Class
+```csharp
+public class Person
+{
+    [SensitiveDataKeyId]
+    public int Id;
+
+    [SensitiveData]
+    public string FirstName { get; set; }
+
+    [SensitiveData(SerializeToMember =nameof(AgeEncrypted))]
+    public int Age { get; set; };
+
+    public string AgeEncrypted { get; set; }
+}
+```
+
+### FieldCryptoEngine
+```csharp
+var person = new Person()
+{
+    Id = 1,
+    FirstName = "John",
+    Age = 30
+};
+
+await engine.EncryptAsync(person);
+
+// Debug Output: 
+// person.Id : 1
+// person.FirstName : "YpipjLAYUfYd1c+SBBxPkg=="
+// person.Age : 0
+// person.AgeEncrypted : "vY3Vavr3dlRO4x29feNt/w=="
+
+await engine.DecryptAsync(person);
+
+// Debug Output: 
+// person.Id : 1
+// person.FirstName : "John"
+// person.Age : 30
+// person.AgeEncrypted : null
 ```
 
 
